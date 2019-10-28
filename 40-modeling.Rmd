@@ -3,4 +3,48 @@ title: "40-modeling"
 output: html_notebook
 ---
 
+# 5. Prepare data for modelling 
 
+I create a new dataframe named "data_prepare" which including the new freatue colunms that I create above and I also borrow some important columns from orignal AB_NYC_2019 dataframe. Then I write it as a new csv and output it for later analysis. 
+```{r data prepare}
+data_prepare<-AB_NYC_2019%>%
+  labeled_distinct_regions(neighbourhood_group)%>%
+  name_with_luxury(name)%>%
+  #last_review_by_year(last_review)%>%
+  #availability_per_day(availability_365)%>% 
+  select(labeled_distinct_regions,name_with_luxury,room_type,minimum_nights,number_of_reviews,reviews_per_month) #,last_review_by_year,availability_per_day)
+
+#delete the # sign above and run the features that you compelte in 30-feature-engineering
+
+data_prepare
+
+write.csv(data_prepare,"data_prepare.csv")
+```
+
+# 6. Test features 
+
+## 4.1 Feature engineering:Locaton of an Airbnb apartment 
+weather distinct regions in NYC have been labeled as 1,2,3,4,5 
+```{r test function 4.1}
+data_prepare%>%
+  assert(in_set(1,2,3,4,5),labeled_distinct_regions)
+```
+
+## 4.2 Feature engineering:filer the descriptions of Airbnb aprtment with the word "luxury" 
+weather "name" (description) column show up the word "luxury". One description contains luxury two times but most are one time and some descriptions do not have word "luxury" in it. 
+```{r test function 4.2}
+data_prepare%>%
+  assert(in_set(0,1,2),name_with_luxury)
+```
+
+## 4.3 Feature engineering:last view by year 
+use the verify() or assert() function the test the bound.It is 2019 NYC dataset, the last view by year can't be 2020 or 1900.  
+```{r test function 4.3}
+
+```
+
+## 4.4 Feature engineering: availablity per day
+use the verify() or assert() function the test the bound. Since it is the ratio of availablity per day so it should be in the range of [0,1]
+```{r test function 4.4}
+
+```

@@ -3,4 +3,92 @@ title: "30-feature-engineering"
 output: html_notebook
 ---
 
+# 4. Four functions which add engineered features to the dataset
 
+## 4.1 Feature engineering:Locaton of an Airbnb apartment 
+I will predict the price in NYC region. I think the location has the biggest impact on the housing price, so I chose the neigbourhood as the most important feature to analyze this dataset. I labeled the different neighbourhood groups here.
+```{r function 4.1 distinct regions in NYC}
+find_distinct_regions<-AB_NYC_2019%>%
+  group_by(neighbourhood_group)%>%
+  summarize(n=n())
+find_distinct_regions[[1]]
+```
+By summarizing the column "neighbourhood_group", I want to know how many distinct regions in NYC. We have five big regions in NYC. They are Bronx, Brooklyn, Manhattan, Queens and Staten Island.
+
+input: dataframe, variable
+output: labeled five distinct regions in NYC; I label Bronx to 1, Brooklyn to 2, Manhattan to 3, Queens to 4 and Staten Island to 5. 
+```{r fucction 4.1 label five distinct regions in NYC}
+labeled_distinct_regions<- function(data, var){
+  names<-data %>%
+    group_by({{var}})%>%
+    summarise(n=n())
+  data%>%
+    mutate(labeled_distinct_regions=case_when({{var}}==names[[1]][1]~1, 
+                                          {{var}}==names[[1]][2]~2,  
+                                          {{var}}==names[[1]][3]~3,  
+                                          {{var}}==names[[1]][4]~4,  
+                                          {{var}}==names[[1]][5]~5))
+}
+
+# find how it looks like 
+labeled_distinct_regions(AB_NYC_2019,neighbourhood_group) %>%
+  select(neighbourhood_group, labeled_distinct_regions)
+```
+
+## 4.2 Feature engineering:filer the descriptions of Airbnb aprtment with the word "luxury" 
+Column "name":descriptions of certain Airbnb apartment 
+
+The column "name" including the word "luxury" might always have a higher price. So I filter the airbnb with word “luxury” in it. 
+
+input: dataframe, variable
+output:count the times of word "luxury" show up under the "name" column. But normally one name(descrpiton) will only have one time "luxury", so for here, it is more likely to find the name(description) with "luxury"
+```{r function 2 name_with_luxury}
+name_with_luxury<- function(data, var){
+  data%>%
+    mutate(name_with_luxury = str_count({{var}}, pattern = "luxury"))%>%
+    arrange(desc(name_with_luxury)) 
+}
+
+# find how it looks like 
+name_with_luxury(AB_NYC_2019,name) %>%
+  select(name, name_with_luxury)
+```
+
+## 4.3 Feature engineering:last view by year 
+"Last_review" column is the latest review date. The earlier the latest review year date is the fewer the people live in that place. I think the reason people don't choose that place is because it's too expensive or too cheap. So I pick this as one of my features to predict the price. 
+
+input:dataframe, variable
+output:"last review" is date(year-month-day) of the last review of a certain Airbnb apartment. Here we only want to know the year of the date instead of (year-month-day).For example 2018-10-19 will be 2018 in new feature column. 
+
+Library(lubridate) is ready in 10-import.Rmd
+```{r function 4.3 last_review_by_year}
+
+last_review_by_year<- function(data, var){
+ 
+}
+
+# find how it looks like 
+#last_review_by_year(AB_NYC_2019, last_review) %>%
+  #select(last_review, last_review_by_year)
+
+```
+
+## 4.4 Feature engineering: availability per day
+"availabilty_365" column:How many days a year can this Airbnb apartment be available for customers to book. 
+"calculated_host_listings_count" column:Total numbers of Airbnb apartment this host have in NYC. 
+
+If you check the "calculated_host_listings_count" column you will find some "host" has 327 Airbnb aprtments listed online and they are all available 365 days a year. The reason for this is these "host" are agency. Therefore, those that are available for more than 350 days a year are more likelly run by agency, so they charge more. Those that are available for only a few days a year are private properties, so they are better value for money. 
+
+input:dataframe, variable
+output:availability per day 
+
+What we have in "availability_365" column is the availability per year. What we want is the availability per day.
+```{r function 4.4 availability_per_day}
+availability_per_day<- function(data, var){
+
+}
+
+# find how it looks like
+#availability_per_day(AB_NYC_2019, availability_365) %>%
+  #select(availability_365, availability_per_day)
+```

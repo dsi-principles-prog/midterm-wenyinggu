@@ -13,6 +13,7 @@ library(assertr)
 library(janitor)
 library(stringr)
 library(glue)
+library(lubridate)
 ```
 
 # 1. Describe the data and the problem 
