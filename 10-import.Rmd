@@ -1,0 +1,190 @@
+---
+title: "10-import"
+output: html_notebook
+---
+
+# Install Library 
+
+```{r library}
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(assertr)
+library(janitor)
+library(stringr)
+library(glue)
+```
+
+# 1. Describe the data and the problem 
+
+This dataset describes the listing activity and metrics in NYC, NY for 2019. I will try to predict the airbnb price in NYC region. The following list presents 16 variables in this datasets
+
+id:Each Airbnb apartment has its own ID
+name:Description of the features of certain Airbnb apartment 
+host_id:Every host has his or her own ID
+host_name:The name of the host 
+neighbourhood_group:Five big region in NYC:Bronx, Brooklyn, Manhattan, Queens and Staten Island
+neighbourhood:More specific neighbourhood names of the Airbnb apartment
+latitude:Latitude data for Airbnb addresses
+longitude:Longitude data for Airbnb apartment addresses
+room_type:"Entire home/apt" & "Private room" & "Shared room"  
+price:the price of certain Airbnb apartment
+minimum_nights:Minimum numbers of nights to book  
+number_of_reviews:Number of reviews this Airbnb apartment received from its customers 
+last_review:Last review's data 
+reviews_per_month:Number of reviews per month
+calculated_host_listings_count:Total numbers of Airbnb apartment this host have in NYC.  
+availability_365:How many days a year can this Airbnb apartment be available for customers to book
+
+# 2. Read in and check data
+
+(1)I import my data here
+(2)I use the function head(), str(), dim() and summary() to read the data and have a general idea about the datasets.
+(3.1)Then I check the data by using verify () There is no violation in colomn "id"; "host_id"; "neighbourhood_group"; "neighbourhood"; "latitude"; "longitude"; "room_type"; "price"; “minimum_nights”; “number_of_reviews”;“calculated_host_listings_count”; “availability_365” which means all the numbers are not na.There 16 na numbers in “name" column; 21 na numbers in "host_name" column; 10052 na numbers in "last_review" column and "reviews_per_month" column. 
+(3.2)I check the bounds of some columns and I find there are 14 unusual data in "minium_night" column. They've been renting on airbnb for more than a year.
+
+Import Data 
+I import my data here
+```{r import data}
+AB_NYC_2019 <- read_csv("AB_NYC_2019.csv")
+View(AB_NYC_2019)
+```
+
+Read Data 
+I use the function head(), str(), dim() and summary() to read the data and have a general idea about the datasets.
+```{r read data}
+head(AB_NYC_2019)
+str(AB_NYC_2019)
+dim(AB_NYC_2019)
+summary(AB_NYC_2019)
+```
+
+Check NA 
+I check the data by using verify () There is no violation in colomn "id"; "host_id"; "neighbourhood_group"; "neighbourhood"; "latitude"; "longitude"; "room_type"; "price"; “minimum_nights”; “number_of_reviews”;“calculated_host_listings_count”; “availability_365” which means all the numbers are not na.There 16 na numbers in “name" column; 21 na numbers in "host_name" column; 10052 na numbers in "last_review" column and "reviews_per_month" column. 
+```{r check data na 1}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[1]))
+```
+
+```{r check data na 2}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[2]))
+```
+
+```{r check data na 3}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[3]))
+```
+
+```{r check data na 4}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[4]))
+```
+
+```{r check data na 5}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[5]))
+```
+
+```{r check data na 6}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[6]))
+```
+
+```{r check data na 7}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[7]))
+```
+
+```{r check data na 8}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[8]))
+```
+
+```{r check data na 9}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[9]))
+```
+
+```{r check data na 10}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[10]))
+```
+
+```{r check data na 11}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[11]))
+```
+
+```{r check data na 12}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[12]))
+```
+
+```{r check data na 13}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[13]))
+```
+
+```{r check data na 14}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[14]))
+```
+
+```{r check data na 15}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[15]))
+```
+
+```{r check data na 16}
+AB_NYC_2019 %>%
+  verify(!is.na(AB_NYC_2019[16]))
+```
+
+Check bounds 
+I check the bounds of some columns and I find there are 14 unusual data in "minium_night" column. They've been renting on airbnb for more than a year.
+```{r cheack bounds price}
+AB_NYC_2019%>%
+  assert(within_bounds(0,90000),price)
+```
+  
+```{r cheack bounds minimum nights}
+AB_NYC_2019%>%
+  assert(within_bounds(0,365),minimum_nights)
+```
+
+# 3. Clean up the data
+
+(1)I use clean_names() function to clean the name of columns. 
+(2)I convert the numeric na data to 0. Since the numeric data is last review column, people didn't review thus the "last review" column's na is 0. 
+(3)I convert the "neighbourhood_group" column to factors. 
+(4)I transfer the content to lower case in "name" column. 
+
+Clean names 
+I use clean_names() function to clean the name of columns.
+```{r clean data: clean names}
+AB_NYC_2019%>%
+  clean_names()
+```
+
+Make NA to 0
+I use clean_names() function to clean the name of columns. 
+```{r clean data: make na to 0}
+AB_NYC_2019<-AB_NYC_2019 %>%
+  mutate_if(is.numeric, ~replace(., is.na(.), 0))
+```
+
+Covert factors 
+I will label the column neigbourhood_group into five differnt groups later so I convert this column into factors.
+```{r clean data: convert factors}
+AB_NYC_2019<-AB_NYC_2019%>%
+  mutate(neighbourhood_group=factor(neighbourhood_group))
+```
+
+Low case column "name"
+Column "name" is descriptions of the feature of certain Airbnb apartment. Therefore, I want to unify the
+content of column "name" to lower case. 
+```{r clean data: lower case column name }
+AB_NYC_2019<-AB_NYC_2019%>%
+  mutate(name=str_to_lower(name))
+```
