@@ -10,9 +10,9 @@ I create a new dataframe named "data_prepare" which including the new freatue co
 data_prepare<-AB_NYC_2019%>%
   labeled_distinct_regions(neighbourhood_group)%>%
   name_with_luxury(name)%>%
-  #last_review_by_year(last_review)%>%
-  #availability_per_day(availability_365)%>% 
-  select(labeled_distinct_regions,name_with_luxury,room_type,minimum_nights,number_of_reviews,reviews_per_month) #,last_review_by_year,availability_per_day)
+  #get_last_year(last_review)%>%
+  get_availability_per_day(availability_365)%>% 
+  select(labeled_distinct_regions,name_with_luxury,room_type,minimum_nights,number_of_reviews,reviews_per_month, availability_per_day) #,last_review_by_year,availability_per_day)
 
 #delete the # sign above and run the features that you compelte in 30-feature-engineering
 
@@ -40,11 +40,15 @@ data_prepare%>%
 ## 4.3 Feature engineering:last view by year 
 use the verify() or assert() function the test the bound.It is 2019 NYC dataset, the last view by year can't be 2020 or 1900.  
 ```{r test function 4.3}
-
+data_prepare%>%
+  assert(in_set(0,1,2),name_with_luxury)
 ```
 
 ## 4.4 Feature engineering: availablity per day
 use the verify() or assert() function the test the bound. Since it is the ratio of availablity per day so it should be in the range of [0,1]
 ```{r test function 4.4}
-
+data_prepare%>%
+  assert(within_bounds(0, 1),availability_per_day)
 ```
+
+Looks great!  The new feature "availability_per_day" passed the test!  All of the values are between 0 and 1.

@@ -63,12 +63,12 @@ output:"last review" is date(year-month-day) of the last review of a certain Air
 Library(lubridate) is ready in 10-import.Rmd
 ```{r function 4.3 last_review_by_year}
 
-last_review_by_year<- function(data, var){
+get_last_year<- function(data, var){
  
 }
 
 # find how it looks like 
-#last_review_by_year(AB_NYC_2019, last_review) %>%
+#get_last_year(AB_NYC_2019, last_review) %>%
   #select(last_review, last_review_by_year)
 
 ```
@@ -84,11 +84,21 @@ output:availability per day
 
 What we have in "availability_365" column is the availability per year. What we want is the availability per day.
 ```{r function 4.4 availability_per_day}
-availability_per_day<- function(data, var){
-
+get_availability_per_day<- function(data, var){
+  data %>% 
+    mutate(availability_per_day = {{var}}/365)
 }
 
-# find how it looks like
-#availability_per_day(AB_NYC_2019, availability_365) %>%
-  #select(availability_365, availability_per_day)
+#find how it looks like
+get_availability_per_day(AB_NYC_2019, availability_365) %>%
+  select(availability_365, availability_per_day)
 ```
+### Test the function
+```{r}
+test_case <- get_availability_per_day(AB_NYC_2019, availability_365) %>%
+  select(availability_365, availability_per_day) 
+test_case %>% 
+  assert(within_bounds(0,1))
+```
+
+Looks great!  Our function passed the test!  All of the values are between 0 and 1.
