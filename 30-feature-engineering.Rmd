@@ -18,7 +18,7 @@ By summarizing the column "neighbourhood_group", I want to know how many distinc
 input: dataframe, variable
 output: labeled five distinct regions in NYC; I label Bronx to 1, Brooklyn to 2, Manhattan to 3, Queens to 4 and Staten Island to 5. 
 ```{r fucction 4.1 label five distinct regions in NYC}
-labeled_distinct_regions<- function(data, var){
+get_labeled_distinct_regions<- function(data, var){
   names<-data %>%
     group_by({{var}})%>%
     summarise(n=n())
@@ -31,7 +31,7 @@ labeled_distinct_regions<- function(data, var){
 }
 
 # find how it looks like 
-labeled_distinct_regions(AB_NYC_2019,neighbourhood_group) %>%
+get_labeled_distinct_regions(AB_NYC_2019,neighbourhood_group) %>%
   select(neighbourhood_group, labeled_distinct_regions)
 ```
 
@@ -43,14 +43,14 @@ The column "name" including the word "luxury" might always have a higher price. 
 input: dataframe, variable
 output:count the times of word "luxury" show up under the "name" column. But normally one name(descrpiton) will only have one time "luxury", so for here, it is more likely to find the name(description) with "luxury"
 ```{r function 2 name_with_luxury}
-name_with_luxury<- function(data, var){
+get_name_with_luxury<- function(data, var){
   data%>%
     mutate(name_with_luxury = str_count({{var}}, pattern = "luxury"))%>%
     arrange(desc(name_with_luxury)) 
 }
 
 # find how it looks like 
-name_with_luxury(AB_NYC_2019,name) %>%
+get_name_with_luxury(AB_NYC_2019,name) %>%
   select(name, name_with_luxury)
 ```
 
