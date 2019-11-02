@@ -8,8 +8,8 @@ output: html_notebook
 I create a new dataframe named "data_prepare" which including the new freatue colunms that I create above and I also borrow some important columns from orignal AB_NYC_2019 dataframe. Then I write it as a new csv and output it for later analysis. 
 ```{r data prepare}
 data_prepare<-AB_NYC_2019%>%
-  labeled_distinct_regions(neighbourhood_group)%>%
-  name_with_luxury(name)%>%
+  get_labeled_distinct_regions(neighbourhood_group)%>%
+  get_name_with_luxury(name)%>%
   #get_last_year(last_review)%>%
   get_availability_per_day(availability_365)%>% 
   select(labeled_distinct_regions,name_with_luxury,room_type,minimum_nights,number_of_reviews,reviews_per_month, availability_per_day) #,last_review_by_year,availability_per_day)
